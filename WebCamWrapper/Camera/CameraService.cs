@@ -52,5 +52,27 @@ namespace Touchless.Vision.Camera
                 yield return new Camera(CameraMethods, cameraInfo.Name, cameraInfo.Index);
             }
         }
+
+       public static Camera GetActiveCamera()
+        {
+            foreach (Camera cam in CameraService.AvailableCameras)
+            {
+                var source = new CameraFrameSource(cam);
+                source.Camera.CaptureWidth = 640;
+                source.Camera.CaptureHeight = 480;
+                source.Camera.Fps = 50;
+
+                var captureSuccessful = source.StartFrameCapture();
+
+                if (captureSuccessful)
+                    source.StopFrameCapture();
+                else
+                    return cam;
+
+            }
+
+            return null;
+        }
+
     }
 }
